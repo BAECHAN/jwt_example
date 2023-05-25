@@ -3,6 +3,7 @@ package com.example.demo.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -12,10 +13,18 @@ import java.util.Date;
 
 @Service
 public class SecurityService {
-    private static final String SECRET_KEY = "asljdklfjlkxczvnmxczasdkjflkasjdflkjsadlkfjskldfjlkasdjfkjsalkfjsakldf";
+
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
+
+    @Value("#{${jwt.expireTime}}")
+    private int expireTimeAsString;
 
     // 로그인 서비스 던질 때
-    public String createToken(String subject, long expireTime) {
+    public String createToken(String subject) {
+
+        Long expireTime = Long.valueOf(expireTimeAsString);
+
         if(expireTime <= 0){
             throw new RuntimeException("만료시간이 0보다 작습니다.");
         }
